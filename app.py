@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 # Define the CoinMarketCap API endpoint and parameters
 API_ENDPOINT = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/historical'
-API_KEY = 'your_coinmarketcap_api_key_here'
+API_KEY = '4481b7f5-e43b-4fc3-889d-217a5863227a'
 
 # Define the current prices for each cryptocurrency
 CRYPTOS = {
