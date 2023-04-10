@@ -88,4 +88,4 @@ if submitted:
     fig.update_layout(
         xaxis_title='Date',
         yaxis_title='Price (USD)',
-        title=f'Crypto Prices and Index (BTC={btc_percent}%, ETH
+        title=f'Crypto Prices and Index (BTC={btc_percent}%, ETH={eth_percent}%, LTC={ltc_percent}%)'
