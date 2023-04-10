@@ -70,8 +70,6 @@ if submitted:
 
     # Plot the historical prices of each cryptocurrency and the hypothetical index value
     fig = go.Figure()
-    for coin, df in historical_prices.items():
-        fig.add_trace(go.Scatter(x=df.index, y=df['price'], name=coin))
     fig.add_trace(go.Scatter(x=[historical_prices['Bitcoin'].index[-1]], y=[index_value], name='Crypto Index'))
 
     # Update the plot layout
