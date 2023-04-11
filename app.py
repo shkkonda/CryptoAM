@@ -97,7 +97,9 @@ if submitted:
 
     fixed_returns = go.Scatter(x=index_df.index, y=xirr_values, name='Fixed Returns')
     fixed_returns_text = f"Fixed Returns: ${xirr_values[-1]:,.2f}"
-    fixed_returns.update(text=fixed_returns_text)
+    text_array = [None] * (len(xirr_values) - 1)
+    text_array.append(fixed_returns_text)
+    fixed_returns.update(text=text_array, mode='lines+markers+text')
 
     fig.add_trace(crypto_index)
     fig.add_trace(fixed_returns)
