@@ -92,11 +92,11 @@ if submitted:
     fig = go.Figure()
 
     crypto_index = go.Scatter(x=index_df.index, y=index_df['value'], name='Crypto Index')
-    crypto_index_text = [f"Crypto Index: ${index_df['value'].iloc[-1]:,.2f}"]
+    crypto_index_text = f"Crypto Index: ${index_df['value'].iloc[-1]:,.2f}"
     crypto_index.update(text=crypto_index_text)
 
     fixed_returns = go.Scatter(x=index_df.index, y=xirr_values, name='Fixed Returns')
-    fixed_returns_text = [f"Fixed Returns: ${xirr_values[-1]:,.2f}"]
+    fixed_returns_text = f"Fixed Returns: ${xirr_values[-1]:,.2f}"
     fixed_returns.update(text=fixed_returns_text)
 
     fig.add_trace(crypto_index)
