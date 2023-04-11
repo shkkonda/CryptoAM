@@ -99,7 +99,12 @@ if submitted:
     fixed_returns_text = f"Fixed Returns: ${xirr_values[-1]:,.2f}"
     text_array = [None] * (len(xirr_values) - 1)
     text_array.append(fixed_returns_text)
-    fixed_returns.update(text=text_array, mode='lines+markers+text')
+    # Set the marker parameter to None for all but the last data point
+    marker = {'symbol': 'circle', 'size': 10}
+    marker_none = {'symbol': 'circle', 'size': 0}
+    marker_list = [marker_none] * (len(xirr_values) - 1)
+    marker_list.append(marker)
+    fixed_returns.update(text=text_array, mode='lines+markers+text', textposition='top center')
 
     fig.add_trace(crypto_index)
     fig.add_trace(fixed_returns)
