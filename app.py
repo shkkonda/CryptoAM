@@ -2,7 +2,6 @@ import streamlit as st
 import requests
 import pandas as pd
 import plotly.graph_objs as go
-from datetime import datetime, timedelta
 
 # Define the CoinGecko API endpoint and parameters
 API_ENDPOINT = 'https://api.coingecko.com/api/v3/coins'
@@ -19,7 +18,7 @@ def fetch_historical_prices(coin_id):
     # Define the API query parameters
     params = {
         'vs_currency': 'usd',
-        'days': 30
+        'days': 'max'
     }
 
     # Send the API request
@@ -34,15 +33,17 @@ def fetch_historical_prices(coin_id):
     df['time'] = pd.to_datetime(df['time'], unit='ms')
     df.set_index('time', inplace=True)
 
+    # Resample the DataFrame by day and take the last value for each day
+    df = df.resample('D').last()
+
     return df
 
 def calculate_index(coin_splits):
     """
     Calculates the value of a hypothetical crypto index based on the input percentage splits.
     """
-    common_dates = set.intersection(*[set(df.index) for df in historical_prices.values()])
     index = []
-    for date in common_dates:
+    for date, row in historical_prices['Bitcoin'].iterrows():
         total_value = 0
         for coin, percent in coin_splits.items():
             price = historical_prices[coin].loc[date]['price']
@@ -68,26 +69,17 @@ if submitted:
     for coin, coin_id in COINS.items():
         historical_prices[coin] = fetch_historical_prices(coin_id)
 
-    # Calculate the index value for each common date
+    # Calculate the index value for each day
     coin_splits = {'Bitcoin': btc_percent, 'Ethereum': eth_percent, 'Litecoin': ltc_percent}
     index_values = calculate_index(coin_splits)
 
     # Create a DataFrame of the historical index values
-    common_dates = sorted(set.intersection(*[set(df.index) for df in historical_prices.values()]))
-    index_data = {'date': common_dates, 'value': index_values}
+    index_data = {'date': historical_prices['Bitcoin'].index, 'value': index_values}
     index_df = pd.DataFrame(index_data)
     index_df.set_index('date', inplace=True)
 
     # Plot the historical index values
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=index_df.index, y=index_df['value'], name='Crypto Index'))
-
-    # Update the plot layout
-    fig.update_layout(
-        xaxis_title='Date',
-        yaxis_title='Price (USD)',
-        title=f'Crypto Prices and Index (BTC={btc_percent}, ETH={eth_percent}, LTC={ltc_percent})'
-    )
-
-    # Display the plot
+    fig.update_layout(title='Historical Crypto Index', xaxis_title='Date', yaxis_title='Value (USD)')
     st.plotly_chart(fig)
