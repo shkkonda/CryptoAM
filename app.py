@@ -96,7 +96,7 @@ if submitted:
     crypto_index.update(text=crypto_index_text)
 
     fixed_returns = go.Scatter(x=index_df.index, y=xirr_values, name='Fixed Returns')
-    fixed_returns_text = f"Fixed Returns: ${xirr_values[-1]:,.2f}"
+    fixed_returns_text = f"${xirr_values[-1]:,.2f}"
     text_array = [None] * (len(xirr_values) - 1)
     text_array.append(fixed_returns_text)
     # Set the marker parameter to None for all but the last data point
