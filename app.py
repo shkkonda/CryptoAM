@@ -86,7 +86,7 @@ if submitted:
     days = (end_date - start_date).days
     annual_rate = 0.15
     daily_rate = (1 + annual_rate) ** (1/365)
-    xirr_values = [100 * daily_rate**(i/days) for i in range(days+1)]
+    xirr_values = [100 * daily_rate**(i) for i in range(days+1)]
 
     # Plot the historical index values
     fig = go.Figure()
