@@ -100,11 +100,12 @@ if submitted:
     text_array = [None] * (len(xirr_values) - 1)
     text_array.append(fixed_returns_text)
     # Set the marker parameter to None for all but the last data point
-    marker = {'symbol': 'circle', 'size': 10}
-    marker_none = {'symbol': 'circle', 'size': 0}
-    marker_list = [marker_none] * (len(xirr_values) - 1)
-    marker_list.append(marker)
-    fixed_returns.update(text=text_array, mode='lines+markers+text', textposition='top center', marker={'color': 'red', 'size': marker_list})
+    # Set the marker size for all data points except the last one to 0
+    marker_size = [0] * (len(xirr_values) - 1)
+
+    # Set the marker size for the last data point to 10
+    marker_size.append(10)
+    fixed_returns.update(text=text_array, mode='lines+markers+text', textposition='top center', marker={'color': 'red', 'size': marker_size})
 
     fig.add_trace(crypto_index)
     fig.add_trace(fixed_returns)
