@@ -18,7 +18,7 @@ def fetch_historical_prices(coin_id):
     # Define the API query parameters
     params = {
         'vs_currency': 'usd',
-        'days': 'max'
+        'days': 30
     }
 
     # Send the API request
