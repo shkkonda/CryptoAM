@@ -56,7 +56,10 @@ def calculate_index(coin_splits):
 
 # Define the app layout
 st.title('Crypto Index Tracker')
-submitted = st.form_submit_button('Calculate Index')
+with st.form(key='coin_splits'):
+
+
+    submitted = st.form_submit_button('Calculate Index')
 
 if submitted:
     # Fetch the historical prices for each cryptocurrency
