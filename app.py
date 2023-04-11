@@ -56,33 +56,31 @@ def calculate_index(coin_splits):
 
 # Define the app layout
 st.title('Crypto Index Tracker')
-with st.form(key='coin_splits'):
+username = st.text_input('Username:')
+password = st.text_input('Password:', type='password')
+if st.button('Login'):
+    if username == 'admin' and password == 'password':
+        # Fetch the historical prices for each cryptocurrency
+        historical_prices = {}
+        for coin, coin_id in COINS.items():
+            historical_prices[coin] = fetch_historical_prices(coin_id)
 
+        # Calculate the index value for each day
+        coin_splits = {'Bitcoin': 0.65, 'Ethereum': 0.30, 'Litecoin': 0.05}
+        index_values = calculate_index(coin_splits)
 
-    submitted = st.form_submit_button('Calculate Index')
+        # Create a DataFrame of the historical index values
+        index_data = {'date': historical_prices['Bitcoin'].index, 'value': index_values}
+        index_df = pd.DataFrame(index_data)
+        index_df.set_index('date', inplace=True)
 
-if submitted:
-    # Fetch the historical prices for each cryptocurrency
-    historical_prices = {}
-    for coin, coin_id in COINS.items():
-        historical_prices[coin] = fetch_historical_prices(coin_id)
-
-    # Calculate the index value for each day
-    coin_splits = {'Bitcoin': 0.65, 'Ethereum': 0.30, 'Litecoin': 0.05}
-    index_values = calculate_index(coin_splits)
-
-    # Create a DataFrame of the historical index values
-    index_data = {'date': historical_prices['Bitcoin'].index, 'value': index_values}
-    index_df = pd.DataFrame(index_data)
-    index_df.set_index('date', inplace=True)
-    
-    # Calculate the index value for each day using an annual growth rate of 15%
-    start_date = historical_prices['Bitcoin'].index[0]
-    end_date = historical_prices['Bitcoin'].index[-1]
-    days = (end_date - start_date).days
-    annual_rate = 0.15
-    daily_rate = (1 + annual_rate) ** (1/365)
-    xirr_values = [100 * daily_rate**(i) for i in range(days+1)]
+        # Calculate the index value for each day using an annual growth rate of 15%
+        start_date = historical_prices['Bitcoin'].index[0]
+        end_date = historical_prices['Bitcoin'].index[-1]
+        days = (end_date - start_date).days
+        annual_rate = 0.15
+        daily_rate = (1 + annual_rate) ** (1/365)
+        xirr_values = [100 * daily_rate**(i) for i in range(days+1)]
 
     # Plot the historical index values
     fig = go.Figure()
