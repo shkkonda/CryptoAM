@@ -90,7 +90,18 @@ if submitted:
 
     # Plot the historical index values
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=index_df.index, y=index_df['value'], name='Crypto Index'))
-    fig.add_trace(go.Scatter(x=index_df.index, y=xirr_values, name='Fixed Returns'))
+
+    crypto_index = go.Scatter(x=index_df.index, y=index_df['value'], name='Crypto Index')
+    crypto_index_text = [f"Crypto Index: ${index_df['value'][-1]:,.2f}"]
+    crypto_index.update(text=crypto_index_text)
+
+    fixed_returns = go.Scatter(x=index_df.index, y=xirr_values, name='Fixed Returns')
+    fixed_returns_text = [f"Fixed Returns: ${xirr_values[-1]:,.2f}"]
+    fixed_returns.update(text=fixed_returns_text)
+
+    fig.add_trace(crypto_index)
+    fig.add_trace(fixed_returns)
+
     fig.update_layout(title='Historical Crypto Index', xaxis_title='Date', yaxis_title='Value (USD)')
+
     st.plotly_chart(fig)
