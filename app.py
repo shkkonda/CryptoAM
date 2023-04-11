@@ -40,12 +40,15 @@ def calculate_index(coin_splits):
     """
     Calculates the value of a hypothetical crypto index based on the input percentage splits.
     """
-    total_value = 0
-    for coin, percent in coin_splits.items():
-        price = historical_prices[coin].iloc[-1]['price']
-        value = percent/100 * price
-        total_value += value
-    return total_value
+    index = []
+    for date in historical_prices['Bitcoin'].index:
+        total_value = 0
+        for coin, percent in coin_splits.items():
+            price = historical_prices[coin].loc[date]['price']
+            value = percent/100 * price
+            total_value += value
+        index.append(total_value)
+    return index
 
 # Define the app layout
 st.title('Crypto Index Tracker')
@@ -64,13 +67,19 @@ if submitted:
     for coin, coin_id in COINS.items():
         historical_prices[coin] = fetch_historical_prices(coin_id)
 
-    # Calculate the index value based on the input
+    # Calculate the index value for each date
     coin_splits = {'Bitcoin': btc_percent, 'Ethereum': eth_percent, 'Litecoin': ltc_percent}
-    index_value = calculate_index(coin_splits)
+    index_values = calculate_index(coin_splits)
 
-    # Plot the historical prices of each cryptocurrency and the hypothetical index value
+    # Create a DataFrame of the historical index values
+    index_dates = historical_prices['Bitcoin'].index
+    index_data = {'date': index_dates, 'value': index_values}
+    index_df = pd.DataFrame(index_data)
+    index_df.set_index('date', inplace=True)
+
+    # Plot the historical index values
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=[historical_prices['Bitcoin'].index[-1]], y=[index_value], name='Crypto Index'))
+    fig.add_trace(go.Scatter(x=index_df.index, y=index_df['value'], name='Crypto Index'))
 
     # Update the plot layout
     fig.update_layout(
