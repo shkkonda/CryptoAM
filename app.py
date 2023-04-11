@@ -56,13 +56,6 @@ def calculate_index(coin_splits):
 
 # Define the app layout
 st.title('Crypto Index Tracker')
-
-with st.form(key='coin_splits'):
-    st.header('Input Crypto Percentage Splits')
-    btc_percent = st.slider('Bitcoin', 0, 100, 33)
-    eth_percent = st.slider('Ethereum', 0, 100, 33)
-    ltc_percent = st.slider('Litecoin', 0, 100, 33)
-
     submitted = st.form_submit_button('Calculate Index')
 
 if submitted:
@@ -72,7 +65,7 @@ if submitted:
         historical_prices[coin] = fetch_historical_prices(coin_id)
 
     # Calculate the index value for each day
-    coin_splits = {'Bitcoin': btc_percent, 'Ethereum': eth_percent, 'Litecoin': ltc_percent}
+    coin_splits = {'Bitcoin': 0.65, 'Ethereum': 0.30, 'Litecoin': 0.05}
     index_values = calculate_index(coin_splits)
 
     # Create a DataFrame of the historical index values
