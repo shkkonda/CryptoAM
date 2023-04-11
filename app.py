@@ -50,7 +50,9 @@ def calculate_index(coin_splits):
             value = percent/100 * price
             total_value += value
         index.append(total_value)
-    return index
+    # Normalize the index values to start from 100
+    normalized_index = [100*(i/index[0]) for i in index]
+    return normalized_index
 
 # Define the app layout
 st.title('Crypto Index Tracker')
