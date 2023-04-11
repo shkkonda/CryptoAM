@@ -79,9 +79,18 @@ if submitted:
     index_data = {'date': historical_prices['Bitcoin'].index, 'value': index_values}
     index_df = pd.DataFrame(index_data)
     index_df.set_index('date', inplace=True)
+    
+    # Calculate the index value for each day using an annual growth rate of 15%
+    start_date = historical_prices['Bitcoin'].index[0]
+    end_date = historical_prices['Bitcoin'].index[-1]
+    days = (end_date - start_date).days
+    annual_rate = 0.15
+    daily_rate = (1 + annual_rate) ** (1/365)
+    xirr_values = [100 * daily_rate**(i/days) for i in range(days+1)]
 
     # Plot the historical index values
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=index_df.index, y=index_df['value'], name='Crypto Index'))
+    fig.add_trace(go.Scatter(x=index_df.index, y=xirr_values, name='Fixed Returns'))
     fig.update_layout(title='Historical Crypto Index', xaxis_title='Date', yaxis_title='Value (USD)')
     st.plotly_chart(fig)
