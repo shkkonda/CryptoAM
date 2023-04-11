@@ -40,8 +40,9 @@ def calculate_index(coin_splits):
     """
     Calculates the value of a hypothetical crypto index based on the input percentage splits.
     """
+    common_dates = set.intersection(*[set(df.index) for df in historical_prices.values()])
     index = []
-    for date in historical_prices['Bitcoin'].index:
+    for date in common_dates:
         total_value = 0
         for coin, percent in coin_splits.items():
             price = historical_prices[coin].loc[date]['price']
@@ -67,13 +68,13 @@ if submitted:
     for coin, coin_id in COINS.items():
         historical_prices[coin] = fetch_historical_prices(coin_id)
 
-    # Calculate the index value for each date
+    # Calculate the index value for each common date
     coin_splits = {'Bitcoin': btc_percent, 'Ethereum': eth_percent, 'Litecoin': ltc_percent}
     index_values = calculate_index(coin_splits)
 
     # Create a DataFrame of the historical index values
-    index_dates = historical_prices['Bitcoin'].index
-    index_data = {'date': index_dates, 'value': index_values}
+    common_dates = sorted(set.intersection(*[set(df.index) for df in historical_prices.values()]))
+    index_data = {'date': common_dates, 'value': index_values}
     index_df = pd.DataFrame(index_data)
     index_df.set_index('date', inplace=True)
 
