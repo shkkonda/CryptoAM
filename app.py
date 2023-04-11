@@ -104,7 +104,7 @@ if submitted:
     marker_none = {'symbol': 'circle', 'size': 0}
     marker_list = [marker_none] * (len(xirr_values) - 1)
     marker_list.append(marker)
-    fixed_returns.update(text=text_array, mode='lines+markers+text', textposition='top center')
+    fixed_returns.update(text=text_array, mode='lines+markers+text', textposition='top center', marker={'color': 'red', 'size': marker_list})
 
     fig.add_trace(crypto_index)
     fig.add_trace(fixed_returns)
