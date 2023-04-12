@@ -2,7 +2,6 @@ import streamlit as st
 import requests
 import pandas as pd
 import plotly.graph_objs as go
-from session_state import get
 
 # Define the CoinGecko API endpoint and parameters
 API_ENDPOINT = 'https://api.coingecko.com/api/v3/coins'
@@ -59,7 +58,7 @@ def calculate_index(coin_splits):
 st.title('Crypto Index Tracker')
 
 # Define session state
-session_state = get(password=None)
+session_state = st.session_state.get(password=None)
 
 if session_state.password:
     # User is logged in
