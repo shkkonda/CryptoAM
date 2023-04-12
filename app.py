@@ -58,7 +58,8 @@ def calculate_index(coin_splits):
 st.title('Crypto Index Tracker')
 
 # Define session state
-session_state = st.session_state.get(password=None)
+if 'password' not in st.session_state:
+    st.session_state['password'] = None
 
 if session_state.password:
     # User is logged in
