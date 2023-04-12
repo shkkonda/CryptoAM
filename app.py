@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 import plotly.graph_objs as go
+from session_state import get
 
 # Define the CoinGecko API endpoint and parameters
 API_ENDPOINT = 'https://api.coingecko.com/api/v3/coins'
@@ -56,10 +57,17 @@ def calculate_index(coin_splits):
 
 # Define the app layout
 st.title('Crypto Index Tracker')
-username = st.text_input('Username:')
-password = st.text_input('Password:', type='password')
-if st.button('Login'):
-    if username == 'admin' and password == 'password':
+
+# Define session state
+session_state = get(password=None)
+
+if session_state.password:
+    # User is logged in
+    st.write(f"Logged in as {session_state.username}")
+    if st.button('Logout'):
+        session_state.password = None
+        st.write('Logged out successfully!')
+    else:
         # Fetch the historical prices for each cryptocurrency
         historical_prices = {}
         for coin, coin_id in COINS.items():
@@ -82,28 +90,40 @@ if st.button('Login'):
         daily_rate = (1 + annual_rate) ** (1/365)
         xirr_values = [100 * daily_rate**(i) for i in range(days+1)]
 
-    # Plot the historical index values
-    fig = go.Figure()
+        # Plot the historical index values
+        fig = go.Figure()
 
-    crypto_index = go.Scatter(x=index_df.index, y=index_df['value'], name='Crypto Index')
-    crypto_index_text = f"Crypto Index: ${index_df['value'].iloc[-1]:,.2f}"
-    crypto_index.update(text=crypto_index_text)
+        crypto_index = go.Scatter(x=index_df.index, y=index_df['value'], name='Crypto Index')
+        crypto_index_text = f"Crypto Index: ${index_df['value'].iloc[-1]:,.2f}"
+        crypto_index.update(text=crypto_index_text)
 
-    fixed_returns = go.Scatter(x=index_df.index, y=xirr_values, name='Fixed Returns')
-    fixed_returns_text = f"${xirr_values[-1]:,.2f}"
-    text_array = [None] * (len(xirr_values) - 1)
-    text_array.append(fixed_returns_text)
-    # Set the marker parameter to None for all but the last data point
-    # Set the marker size for all data points except the last one to 0
-    marker_size = [0] * (len(xirr_values) - 1)
+        fixed_returns = go.Scatter(x=index_df.index, y=xirr_values, name='Fixed Returns')
+        fixed_returns_text = f"${xirr_values[-1]:,.2f}"
+        text_array = [None] * (len(xirr_values) - 1)
+        text_array.append(fixed_returns_text)
+        # Set the marker parameter to None for all but the last data point
+        # Set the marker size for all data points except the last one to 0
+        marker_size = [0] * (len(xirr_values) - 1)
 
-    # Set the marker size for the last data point to 10
-    marker_size.append(10)
-    fixed_returns.update(text=text_array, mode='lines+markers+text', textposition='top center', marker={'color': 'red', 'size': marker_size})
+        # Set the marker size for the last data point to 10
+        marker_size.append(10)
+        fixed_returns.update(text=text_array, mode='lines+markers+text', textposition='top center', marker={'color': 'red', 'size': marker_size})
 
-    fig.add_trace(crypto_index)
-    fig.add_trace(fixed_returns)
+        fig.add_trace(crypto_index)
+        fig.add_trace(fixed_returns)
 
-    fig.update_layout(title='Historical Crypto Index', xaxis_title='Date', yaxis_title='Value (USD)')
+        fig.update_layout(title='Historical Crypto Index', xaxis_title='Date', yaxis_title='Value (USD)')
 
-    st.plotly_chart(fig)
+        st.plotly_chart(fig)
+else:
+    # User is not logged in
+    username = st.text_input('Username:')
+    password = st.text_input('Password:', type='password')
+
+    if st.button('Login'):
+        if username == 'admin' and password == 'password':
+            session_state.username = username
+            session_state.password = password
+            st.success('Logged in successfully!')
+        else:
+            st.error('Incorrect username or password')
