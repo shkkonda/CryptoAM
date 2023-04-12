@@ -86,8 +86,11 @@ if st.button('Login'):
     fig = go.Figure()
 
     crypto_index = go.Scatter(x=index_df.index, y=index_df['value'], name='Crypto Index')
-    crypto_index_text = f"Crypto Index: ${index_df['value'].iloc[-1]:,.2f}"
+    crypto_index_text = f"${index_df['value'].iloc[-1]:,.2f}"
+    crypto_array = [None] * (len(xirr_values) - 1)
+    crypto_array.append(crypto_index_text)
     crypto_index.update(text=crypto_index_text)
+    crypto_index.update(text=crypto_array, mode='lines+markers+text', textposition='top center', marker={'color': 'blue', 'size': marker_size})
 
     fixed_returns = go.Scatter(x=index_df.index, y=xirr_values, name='Fixed Returns')
     fixed_returns_text = f"${xirr_values[-1]:,.2f}"
